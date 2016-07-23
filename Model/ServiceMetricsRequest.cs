@@ -6,45 +6,52 @@ namespace hsp_api.Model
 {
     public sealed class ServiceMetricsRequest
     {
-        public string from_loc { get; }
+        [JsonProperty(PropertyName="from_loc")]
+        public string FromLocation { get; }
 
-        public string to_loc { get; }
+        [JsonProperty(PropertyName="to_loc")]
+        public string ToLocation { get; }
 
-        public string from_time { get; }
+        [JsonProperty(PropertyName="from_time")]
+        public string FromTime { get; }
 
-        public string to_time { get; }
+        [JsonProperty(PropertyName="to_time")]
+        public string ToTime { get; }
 
-        public string from_date { get; }
+        [JsonProperty(PropertyName="from_date")]
+        public string FromDate { get; }
 
-        public string to_date { get; }
+        [JsonProperty(PropertyName="to_date")]
+        public string ToDate { get; }
 
-        public string days { get; }
+        [JsonProperty(PropertyName="days")]
+        public string Days { get; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public IEnumerable<string> toc_filter { get; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName="toc_filter")]
+        public IEnumerable<string> TOCFilter { get; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public IEnumerable<uint> tolerance { get; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, PropertyName="tolerance")]
+        public IEnumerable<uint> Tolerance { get; }
 
         public ServiceMetricsRequest(string fromCRS, string toCRS, DateTime dateFrom, DateTime dateTo, IEnumerable<string> tocFilter = null, IEnumerable<uint> tolerance = null)
         {
-            from_loc = fromCRS;
-            to_loc = toCRS;
+            FromLocation = fromCRS;
+            ToLocation = toCRS;
 
             if (dateFrom.Date != dateTo.Date)
             {
                 throw new ArgumentException("start and end dates must be the same day");
             }
 
-            from_time = dateFrom.ToString("HHmm");
-            from_date = dateFrom.ToString("yyyy-MM-dd");
-            to_time = dateTo.ToString("HHmm");
-            to_date = dateTo.ToString("yyyy-MM-dd");
+            FromTime = dateFrom.ToString("HHmm");
+            FromDate = dateFrom.ToString("yyyy-MM-dd");
+            ToTime = dateTo.ToString("HHmm");
+            ToDate = dateTo.ToString("yyyy-MM-dd");
 
-            days = GetDays(dateFrom.DayOfWeek);
+            Days = GetDays(dateFrom.DayOfWeek);
 
-            toc_filter = tocFilter;
-            this.tolerance = tolerance;
+            TOCFilter = tocFilter;
+            this.Tolerance = tolerance;
         }
 
         private static string GetDays(DayOfWeek dayOfWeek)
