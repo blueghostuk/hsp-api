@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace hsp_api.Model
 {
-    public sealed class ServiceMetricsResponse
+    internal sealed class ServiceMetricsResponse
     {
         public IEnumerable<Service> Services { get; set; }
 
@@ -17,13 +17,13 @@ namespace hsp_api.Model
         }
     }
 
-    public sealed class Service
+    internal sealed class Service
     {
         [JsonProperty(PropertyName = "serviceAttributesMetrics")]
         public ServiceAttributesMetrics ServiceDetails { get; set; }
     }
 
-    public sealed class ServiceAttributesMetrics
+    internal sealed class ServiceAttributesMetrics
     {
         [JsonProperty(PropertyName = "origin_location")]
         public string OriginLocation { get; set; }

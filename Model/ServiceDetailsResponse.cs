@@ -4,13 +4,13 @@ using Newtonsoft.Json;
 
 namespace hsp_api.Model
 {
-    public sealed class ServiceDetailsResponse
+    internal sealed class ServiceDetailsResponse
     {
         [JsonProperty(PropertyName = "serviceAttributesDetails")]
         public ServiceDetails ServiceDetails { get; set; }
     }
 
-    public sealed class ServiceDetails
+    internal sealed class ServiceDetails
     {
         [JsonProperty(PropertyName = "date_of_service")]
         public DateTime DateOfService { get; set; }
@@ -25,7 +25,7 @@ namespace hsp_api.Model
         public IEnumerable<CallingPoint> CallingPoints { get; set; }
     }
 
-    public sealed class CallingPoint
+    internal sealed class CallingPoint
     {
         [JsonProperty(PropertyName = "location")]
         public string Location { get; set; }

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace hsp_api.Model
 {
-    public sealed class ServiceMetricsRequest
+    internal sealed class ServiceMetricsRequest
     {
         [JsonProperty(PropertyName="from_loc")]
         public string FromLocation { get; }
