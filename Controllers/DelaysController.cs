@@ -6,6 +6,8 @@ using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using hsp_api.Model;
 using Newtonsoft.Json;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace hsp_api.Controllers
 {
@@ -20,8 +22,11 @@ namespace hsp_api.Controllers
         }
 
         [HttpGet]
-        public async Task<ServiceMetricsResponse> Get(string fromCRS, string toCRS, DateTime? startDate = null, DateTime? endDate = null)
+        [Route("{fromCRS}/{toCRS}/")]
+        public async Task<IEnumerable<Train>> Get(string fromCRS, string toCRS, DateTime? startDate = null, DateTime? endDate = null)
         {
+            fromCRS = fromCRS.ToUpper();
+            toCRS = toCRS.ToUpper();
             startDate = startDate ?? DateTime.UtcNow.AddHours(-2);
             endDate = endDate ?? DateTime.UtcNow;
             using (var client = new HttpClient())
@@ -42,17 +47,21 @@ namespace hsp_api.Controllers
                 ));
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();                    
-                    return JsonConvert.DeserializeObject<ServiceMetricsResponse>(content);
+                    var content = await response.Content.ReadAsStringAsync();
+                    var serviceMetrics = JsonConvert.DeserializeObject<ServiceMetricsResponse>(content);
+                    var services = serviceMetrics.ServiceDetails
+                        .Select(s => GetServiceDetails(s.ServiceId))
+                        .ToArray();
+                    await Task.WhenAll(services);
+
+                    return TrainMapper.MapTo(fromCRS, toCRS, services.Select(t => t.Result));
                 }
             }
 
             return null;
         }
 
-        [HttpGet]
-        [Route("service")]
-        public async Task<ServiceDetailsResponse> GetServiceDetails(string rid)
+        private async Task<ServiceDetailsResponse> GetServiceDetails(string rid)
         {
             using (var client = new HttpClient())
             {
@@ -67,7 +76,7 @@ namespace hsp_api.Controllers
                 var response = await client.PostAsJsonAsync<ServiceDetailsRequest>("api/v1/serviceDetails/", new ServiceDetailsRequest(rid));
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();                    
+                    var content = await response.Content.ReadAsStringAsync();
                     return JsonConvert.DeserializeObject<ServiceDetailsResponse>(content);
                 }
             }
