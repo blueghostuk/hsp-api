@@ -63,7 +63,7 @@ namespace hsp_api.Model
                 case DayOfWeek.Wednesday:
                 case DayOfWeek.Thursday:
                 case DayOfWeek.Friday:
-                    return "WEEDKDAY";
+                    return "WEEKDAY";
                 case DayOfWeek.Saturday:
                     return "SATURDAY";
                 case DayOfWeek.Sunday:
