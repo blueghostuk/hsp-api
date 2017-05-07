@@ -12,11 +12,11 @@ using System.Collections.Generic;
 namespace hsp_api.Controllers
 {
     [Route("api/[controller]")]
-    public class DelaysController : Controller
+    public class ServicesController : Controller
     {
         private readonly Configuration _settings;
 
-        public DelaysController(IOptions<Configuration> settings)
+        public ServicesController(IOptions<Configuration> settings)
         {
             _settings = settings.Value;
         }
