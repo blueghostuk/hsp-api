@@ -23,7 +23,7 @@ namespace hsp_api.Controllers
 
         [HttpGet]
         [Route("{fromCRS}/{toCRS}/")]
-        public async Task<IEnumerable<Train>> Get(string fromCRS, string toCRS, DateTime? startDate = null, DateTime? endDate = null)
+        public async Task<IActionResult> Get(string fromCRS, string toCRS, DateTime? startDate = null, DateTime? endDate = null)
         {
             fromCRS = fromCRS.ToUpper();
             toCRS = toCRS.ToUpper();
@@ -54,11 +54,10 @@ namespace hsp_api.Controllers
                         .ToArray();
                     await Task.WhenAll(services);
 
-                    return TrainMapper.MapTo(fromCRS, toCRS, services.Select(t => t.Result));
+                    return Ok(TrainMapper.MapTo(fromCRS, toCRS, services.Select(t => t.Result)));
                 }
+                return new StatusCodeResult((int)response.StatusCode);
             }
-
-            return null;
         }
 
         private async Task<ServiceDetailsResponse> GetServiceDetails(string rid)
