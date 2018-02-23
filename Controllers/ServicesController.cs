@@ -8,6 +8,7 @@ using hsp_api.Model;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace hsp_api.Controllers
 {
@@ -15,10 +16,12 @@ namespace hsp_api.Controllers
     public class ServicesController : Controller
     {
         private readonly Configuration _settings;
+        private readonly ILogger _logger;
 
-        public ServicesController(IOptions<Configuration> settings)
+        public ServicesController(IOptions<Configuration> settings, ILogger<ServicesController> logger)
         {
             _settings = settings.Value;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -56,6 +59,10 @@ namespace hsp_api.Controllers
 
                     return Ok(TrainMapper.MapTo(fromCRS, toCRS, services.Select(t => t.Result)));
                 }
+                else
+                {
+                    _logger.LogWarning("Response not successful: {0}", response.StatusCode);
+                }
                 return new StatusCodeResult((int)response.StatusCode);
             }
         }
@@ -76,7 +83,18 @@ namespace hsp_api.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<ServiceDetailsResponse>(content);
+                    var details = JsonConvert.DeserializeObject<ServiceDetailsResponse>(content);
+                    if (details == null)
+                    {
+                        _logger.LogWarning("Could not parse service details: {0}", content);
+                    }
+                    return details;
+                }
+                else
+                {
+                    _logger.LogWarning("Could not find service details for: {0}. HTTP Code {1}",
+                        rid,
+                        response.StatusCode);
                 }
             }
 

@@ -8,7 +8,13 @@ namespace hsp_api.Model
     {
         internal static IEnumerable<Train> MapTo(string fromCRS, string toCRS, IEnumerable<ServiceDetailsResponse> serviceDetails)
         {
-            return serviceDetails.Select(sd => MapTo(fromCRS, toCRS, sd));
+            if (serviceDetails == null)
+            {
+                return Enumerable.Empty<Train>();
+            }
+            return serviceDetails
+                .Where(sd => sd != null)
+                .Select(sd => MapTo(fromCRS, toCRS, sd));
         }
 
         internal static Train MapTo(string fromCRS, string toCRS, ServiceDetailsResponse serviceDetails)
